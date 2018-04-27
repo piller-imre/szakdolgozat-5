@@ -1,0 +1,124 @@
+%A sz�ks�ges csomagok
+%m�retek: marg�, lap, fej~ �s l�bl�c stb. NE M�DOS�TSUK!
+\usepackage[paperwidth=210mm,paperheight=297mm,headheight=15.2pt,headsep=7.1mm,top=25mm,bottom=25mm,inner=30mm,outer=25mm,dvips]{geometry}
+%fejl�c kezel� csomag
+\usepackage{fancyhdr}
+%ams matematikai makr�csomag
+\usepackage{amsmath}
+%ams matematikai szimb�lumcsomag
+\usepackage{amssymb}
+%sz�nkezel�s
+\usepackage{color}
+%eps �br�k besz�r�sa
+\usepackage{epsfig}
+%grafikai csomag
+\usepackage{graphicx}
+%vez�rl�si szerkezetek
+\usepackage{ifthen}
+%array csomag a t�bl�zatokhoz
+\usepackage{array}
+%saj�t t�telszer� k�rnyezetekhez
+\usepackage{ntheorem}
+%multirow csomag: �sszevont sorokhoz
+\usepackage{multirow}
+%szines tablazatok
+\usepackage{colortbl}
+%�brak�sz�t�s a Tex-kel
+\usepackage[metapost]{mfpic}
+%latin2 k�dol�s - a magyar �kezetes bet�k miatt
+\usepackage[utf8]{inputenc}
+%a magyar elv�laszt�shoz sz�ks�ges
+\usepackage[T1]{fontenc}
+%elv�laszt�st v�gz� csomag
+\usepackage[magyar]{babel}
+
+% \newcommand{\myinclude}[1]{%
+% 
+% \ifthenelse{\not\(\isodd{\thepage}\)}{\thispagestyle{empty}\hbox{}\newpage}%
+% 
+% \include{#1}}
+
+%myheadings be�ll�t�sa
+\def\ps@myheadings{%
+     \def\@oddfoot{\hfil\thepage}
+     \def\@oddhead{}
+      }
+
+%fancyhdr be�ll�t�sa
+\fancyhead[L]{}
+\fancyhead[R]{}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+
+%chapter �tdefini�l�sa
+\renewcommand\chapter{\if@openright\cleardoublepage\else\clearpage\fi
+                    \thispagestyle{myheadings}%
+                    \global\@topnum\z@
+                    \@afterindentfalse
+                    \secdef\@chapter\@schapter}
+
+%Saj�t fejezet parancs: \Chapter
+\newcommand{\Chapter}[1]{\chapter{#1}
+\chead{}
+}
+
+%Saj�t fejezet parancs, r�vid�t�st haszn�lhatunk a tartalomjegyz�kben: \SChapter
+\newcommand{\SChapter}[2]{\chapter[#2]{#1}}
+
+%Alfejezet parancs: \Section
+\newcommand{\Section}[1]{\section{#1}
+\chead{\textsl{\thesection. #1}}
+}
+
+%Alfejezet parancs, r�vid�t�st haszn�lhatunk a fejl�cben  �s a tartalomjegyz�kben is: \SSection
+\newcommand{\SSection}[3]{\section[#3]{#1}
+\chead{\textsl{\thesection. #2}}}
+
+%Al-alfejezet parancs: \SubSection
+\newcommand{\SubSection}[1]{\subsection{#1}
+}
+
+%Al-alfejezet parancs, r�vid�t�st haszn�lhatunk a tartalomjegyz�kben: \SSubSection
+\newcommand{\SSubSection}[2]{\subsection[#2]{#1}
+}
+
+%Saj�t referencia - nem teszi hozz� a n�vel�t, de a pontot igen!
+\newcommand{\myref}[1]{\ref{#1}.}
+
+%Saj�t magyar referencia - hozz�teszi a n�vel�t �s a pontot!
+\newcommand{\myaref}[1]{\aref{#1}.}
+
+%t�bl�zatok be�ll�t�sa
+\renewcommand{\arraystretch}{1.3}  %default: 1 Sorok k�z�tti t�vols�g nagy�t�sa
+
+\setlength{\arrayrulewidth}{0.6pt} %default: 0.6pt A vonalak vastags�ga
+
+%A t�lcsordul�si hib�k jelz�se a nyomtat�si k�pben vastag, tel�tett t�glalappal
+\overfullrule10pt
+
+%pont ut�n nem nagyobb a sz�k�z
+\frenchspacing
+
+
+%�j t�telk�rnyezetek
+\newtheoremstyle{MYhun}%
+{\item[\hskip\labelsep\theorem@headerfont ##2.\ ##1.]}%
+{\item[\hskip\labelsep\theorem@headerfont ##2.\ ##1\ \textnormal{(##3).}]}
+
+\newtheoremstyle{MYwithoutnumber}%
+{\item[\hskip\labelsep\theorem@headerfont ##1.]}%
+{\item[\hskip\labelsep\theorem@headerfont ##3.]}
+
+\theoremstyle{MYhun}
+\theorembodyfont{\it}
+\newtheorem{theorem}{tétell}[chapter]
+\theorembodyfont{\rm}\newtheorem{definition}[theorem]{defin�ci�}
+\theorembodyfont{\it}\newtheorem{lemma}[theorem]{lemma}
+\theorembodyfont{\it}\newtheorem{corollary}[theorem]{k�vetkezm�ny}
+\theorembodyfont{\rm}\newtheorem{remark}[theorem]{megjegyz�s}
+\theorembodyfont{\rm}\newtheorem{example}[theorem]{p�lda}
+\theoremstyle{MYwithoutnumber}
+\theorembodyfont{\rm}\newtheorem{prooF}{Bizony�t�s}
+
+\def\QEDsign{\hfill$\Box$}
+\newenvironment{proof}{\begin{prooF}}{\QEDsign\end{prooF}}
