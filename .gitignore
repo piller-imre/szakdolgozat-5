@@ -1,0 +1,8 @@
+
+compile.bat
+dolgozat.pdf
+dolgozat.synctex.gz
+*.aux
+*.thm
+*.toc
+*.log

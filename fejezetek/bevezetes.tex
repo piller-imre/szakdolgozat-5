@@ -1,1 +1,76 @@
-\Chapter{Bevezetés}
+\Chapter{Bevezetés (1-2)}
+A Siemens syngo.via egy kórházakban használt diagnosztikai szotfver. Lehetőséget ad a betegekről különböző kórházi gépek által készített felvételek és mérések vizsgálatára, elemzésére. Ezt a leletezőrendszere teszi lehetővé, amely többek között tartalmaz egy a vizsgálat során készített mérésekből és a hozzájuk tartozó képekből álló, dinamikusan generált táblázatot. A táblázat több különböző típusú mérést képes megjeleníteni, ilyen például a Distance Line, vagy a ROI Circle. A Distance Line-nak egy (távolság), míg a ROI Cirle-nek két (sugár és terület) adata van. Minden mérésnél meg lehet adni egy nevet, kommentet, változást az előző állapothoz képest, laterality-t, súlyosságot és diagnózist.
+
+\noindent A feladat ennek a táblázatnak a tesztelése. Ahhoz, hogy gyorsan és egyszerűen tesztelhető legyen nem érdemes manuális teszteket alkalmazni. Célszerű helyettük inkább automatizált teszteket írni, mivel azok sokkal gyorsabbak, mintha kézzel kellene kattintgatni a UI-on. Ahhoz, hogy ilyen teszteket könnyen lehessen írni task layert szokás használni, amelyen keresztül könnyen elérhetőek a UI funkciói.
+
+\noindent Fontos szempont, hogy az elkészült task layer használható legyen az nUnit-ra és a TestStack.White-ra épülő TAU-val, mivel az automatizált teszteket a syngo.via-hoz a TAU-n keresztül futtatjuk.
+
+\Section{nUnit}
+Az nUnit \acite{nUnit} az egy az MSTest-hez hasonló nyílt forráskódú tesztkeretrendszer, ami az összes .Net-es nyelvvel használható. A keretrendszerrel használható a Visual Studio-ba épített Test Explorer ablak ahonnan elérhető és futtatható az összes teszt, valamint megjeleníti az eredményeket ha lefuttatjuk a teszteket. A megírt teszteket fordításkor automatikusan megkeresi és megjeleníti a Test Explorer-ben.
+
+\noindent MSTest-es teszt írásakor a teszteket meg kell jelölni bizonyos attribútumokkal, hogy a rendszer megtalálja és le tudja futtatni azokat. Ehhez az osztályokat amelyek a teszteket tartalmazzák a \verb|TestClass|, a tesztmetódusokat pedig a \verb|TestMethod| atribútummal kell ellátni.
+
+\noindent Egy tesztosztályban több tesztmetódus is lehet, ezt egyszerű e teszteknél célszerű használni. Ilyenkor célszerű azokat a kódrészleteket amiket minden teszt elején le kell futtatni kiemelni egy \verb|TestInitialize| attribútummal ellátott metódusba kiemelni, míg azokat amiket minden teszt után kell futtatni egy \verb|TestCleanup|-pal ellátottba kiemelni.
+
+\noindent Ha a tesztek írásához nUnit-ot használunk, akkor a \verb|TestClass| helyett \verb|TestFixture|, a \verb|TestMethod| helyett \verb|Test|, \verb|TestInitialize| helyett \verb|SetUp|, \verb|TestCleanup| helyett pedig a \verb|TearDown| attribútumokat kell használnunk. nUnit esetén rendelkezésünkre áll a \verb|TestCase| attribútum is, amelyból egy tesztmetódusra akár többet is rakhatunk. Ezzel tudunk oylan teszteket írni, amelyek több különböző paraméterlistával futnak le.
+
+\begin{verbatim}
+[TestFixture]
+public class TesztOsztaly {
+    [SetUp]
+    public void SetUp() {
+        //...
+    }
+    [TearDown]
+    public void TearDown() {
+        //...
+    }
+    [Test]
+    [TestCase(1)]
+    [TestCase(2)]
+    public void TesztMetodus(int parameter) {
+        //...
+    }
+}
+\end{verbatim}
+
+\noindent Az nUnit az MSTest-tel ellentétben támogatja absztrakt ősosztályok használatát. Ezt akkor érdemes használni, ha közös \verb|SetUp| és \verb|TearDown| metódusa van több tesztnek is. Ha szükség van rá, akkor megadhatunk több \verb|SetUp| és \verb|TearDown| metódust is. Ezt akkor érdemes megtenni, ha nem teljesen ugyanazt kell megtenni minden teszt előtt és után, viszont vannak közös részek. Ebben az esetben mindig az ősosztályé fut le először, majd a leszármazotté.
+
+\noindent Összetettebb integrációs és rendszerteszteket is lehet írni a keretrendszer felhasználásával. Ilyenkor célszerű egy absztrakt ősosztályt írni és minden tesztet egy külön fájlba írni felhasználva a C\# \verb|partial| osztályait. Az ilyen osztályok esetén az osztály definíciója több különböző fájlban van, melyekből fordításkor egy osztály lesz. Így nem kell több 100, vagy akár 1000 soros tesztosztálykat írni.
+
+\Section{TestStack.White}
+A TestStack.White egy UI teszt automatizálásra használt keretrendszer. Támogatja a Win32-es, WPF-es, WinForm-os, SWT-s és Silverlightos alkalmazásokat. A rendszer a Microsoftos UIAutomation keretrendszerre épül, így ha használni akarjuk előtte meg kell győződnünk arról, hogy a UI elemek amiket tesztelni akarunk támogatják-e azt.
+
+\noindent Ahhoz, hogy elérjük a UI-on lévő elemeket meg kell adni egy azonosítót aminek a segítségével meg lehet találni a tesztből.
+
+\begin{verbatim}
+<Window AutomationProperties.AutomationID="foo">
+    <Button AutomationProperties.AutomationID="bar" />
+</Window>
+\end{verbatim}
+\noindent Ahhoz, hogy a UI-on különböző dolgokat hajtsunk végre vele előbb le kell kérni az ablakot amiben fut a tesztelendő alkalmazás.
+
+\begin{verbatim}
+Application application = Application.Launch("foobar.exe");
+Window window = application.GetWindow("foo", InitializeOption.NoCache);
+\end{verbatim}
+
+\noindent Ezután le kell kérni a UI elemet amin szeretnénk valamit végrehajtani.
+
+\begin{verbatim}
+Button button = window.Get<Button>("bar");
+button.Click();
+\end{verbatim}
+
+\Section{TAU}
+A TAU egy Siemenses belső fejlesztésű tesztkeretrendszer, ami az nUnit-ot és a\\
+TestStack.White-ot fogja egybe. Használható parancssorból, valamint van grafikus felülete is.
+
+\noindent Parancssorból való indítás esetén meg kell adni a dll fájlt ami tartalmazza a futtatandó teszteket, opcionálisan megadható, hogy többször futtassa le őket és, hogy jelenítse-e meg a felhasználói felületet.
+
+\begin{verbatim}
+TAU.Runner.exe -ui -iterations 1...
+\end{verbatim}
+\todo[inline]{argumentumok megadása}
+
+\noindent A grafikus felületen láthatjuk a kiválasztott dll fájlokban lévő teszteket, valamint futtathatjuk is őket. Futtatás után lehetőség van megtekinteni a tesztek eredményét az ablakon belül, vagy akár egy automatikusan generált HTML oldalon.

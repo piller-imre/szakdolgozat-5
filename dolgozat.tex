@@ -1,33 +1,20 @@
 \documentclass[12pt,a4paper]{report}
-
 \usepackage{dolgozat}
+\usepackage{todonotes}
 
 \begin{document}
 \include{cimlap/cimlap}
-
 \pagestyle{myheadings}
-
-\include{feladatkiiras/feladatkiiras}%feladat kiírás
-
-\tableofcontents %automatikus tartalomjegyzék--változás esetén kétszer fordítani
-
+\include{feladatkiiras/feladatkiiras}
+\tableofcontents
 \newpage
-
-\pagestyle{fancy} %az oldal stílusa, ez adja az aláhúzott fejlecet
-
+\pagestyle{fancy}
 \include{fejezetek/bevezetes}
-
 \include{fejezetek/problemakor}
-
 \include{fejezetek/specifikacio}
-
 \include{fejezetek/tervezes}
-
 \include{fejezetek/implementacio}
-
 \include{fejezetek/teszteles_eredmenyek}
-
 \include{fejezetek/osszegzes}
-
 \include{fejezetek/hivatkozasok}
 \end{document}
